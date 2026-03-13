@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Bills</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <h1>🏥 Hospital Management System</h1>
+        <h2 style="text-align:center; color:#6870de; margin-top:-10px;"> Billing Management</h2>
+
+         <div class="navigation">
+           <a href="{{ url_for('hospitals') }}">🏥 Hospital</a>
+            <a href="{{ url_for('doctor') }}">👨‍⚕️ Doctor</a>
+            <a href="{{ url_for('departments') }}">🏢 Department</a>
+            <a href="{{ url_for('bills') }}">💳 Billing</a>
+            <a href="{{ url_for('examination') }}">📝 Examination</a>
+            <a href="{{ url_for('index') }}">👤 Patient</a>
+        </div>
+
+        <!-- Bill Creation / Edit Form -->
+        <form method="POST" action="/submit_bill">
+            {% if selected_bill %}
+                <input type="hidden" name="billid" value="{{ selected_bill.billid }}">
+            {% endif %}
+
+            <input type="number" step="0.01" name="totalamount" placeholder="Total Amount (₺)"
+                   value="{{ selected_bill.totalamount if selected_bill else '' }}" required>
+
+            <select name="paymentstatus" required>
+                <option value="Paid" {% if selected_bill and selected_bill.paymentstatus == 'Paid' %}selected{% endif %}>Paid</option>
+                <option value="Unpaid" {% if selected_bill and selected_bill.paymentstatus == 'Unpaid' %}selected{% endif %}>Unpaid</option>
+                <option value="Pending" {% if selected_bill and selected_bill.paymentstatus == 'Pending' %}selected{% endif %}>Pending</option>
+            </select>
+
+            <input type="date" name="paymentdate"
+                   value="{{ selected_bill.paymentdate if selected_bill else '' }}" required>
+
+            <input type="number" name="examinationid" placeholder="Examination ID"
+                   value="{{ selected_bill.examinationid if selected_bill else '' }}" required>
+
+            <button type="submit">{{ 'Update' if selected_bill else 'Add' }} Bill</button>
+        </form>
+
+        <!-- Bill Search Form -->
+        <form class="form-container" method="GET" action="/bills">
+            <input type="text" name="search" placeholder="Search by Bill ID" value="{{ search_query }}">
+            <button type="submit">🔍 Search</button>
+            {% if search_query %}
+                <a href="/bills" class="clear-search">❌ Clear</a>
+            {% endif %}
+        </form>
+
+        <!-- Bill Table -->
+        <table>
+            <thead>
+            <tr>
+                <th>Bill ID</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Payment Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for b in bills %}
+            <tr>
+                <td>{{ b.billid }}</td>
+                <td>{{ b.totalamount }}</td>
+                <td>{{ b.paymentstatus }}</td>
+                <td>{{ b.paymentdate }}</td>
+                <td>
+                    <a href="/delete_bill/{{ b.billid }}" class="delete-button">✖ Delete</a>
+                    <a href="/bills?edit={{ b.billid }}" class="edit-button">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

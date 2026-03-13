@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Examination Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="main-container">
+    <h1>🏥 Hospital Management System</h1>
+    <h2 style="text-align:center; color:#6870de; margin-top:-10px;"> Examination Management</h2>
+
+     <div class="navigation">
+        <a href="{{ url_for('hospitals') }}">🏥 Hospital</a>
+        <a href="{{ url_for('doctor') }}">👨‍⚕️ Doctor</a>
+        <a href="{{ url_for('departments') }}">🏢 Department</a>
+        <a href="{{ url_for('bills') }}">💳 Billing</a>
+        <a href="{{ url_for('examination') }}">📝 Examination</a>
+        <a href="{{ url_for('index') }}">👤 Patient</a>
+        </div>
+
+    <!-- Medical Examination Ekle/Güncelle Formu -->
+    <form method="POST" action="{{ url_for('submit_examination') }}">
+        {% if selected_examination %}
+            <input type="hidden" name="examinationid" value="{{ selected_examination.examinationid }}">
+        {% endif %}
+        
+        <input type="number" name="patientid" placeholder="Patient ID" required
+               value="{{ selected_examination.patientid if selected_examination else '' }}">
+
+        <input type="number" name="doctorid" placeholder="Doctor ID" required
+               value="{{ selected_examination.doctorid if selected_examination else '' }}">
+
+        <input type="date" name="examinationdate" required
+               value="{{ selected_examination.examinationdate if selected_examination else '' }}">
+
+        <input type="text" name="diagnosis" placeholder="Diagnosis" required
+               value="{{ selected_examination.diagnosis if selected_examination else '' }}">
+
+        <input type="text" name="prescription" placeholder="Prescription" required
+               value="{{ selected_examination.prescription if selected_examination else '' }}">
+
+        <button type="submit">
+            {% if selected_examination %}Update{% else %}Add Examination{% endif %}
+        </button>
+    </form>
+
+    <!-- Arama Formu -->
+    <form class="form-container" method="GET" action="{{ url_for('examination') }}">
+        <input type="text" name="search" placeholder="Search by diagnosis or prescription" value="{{ search_query }}">
+        <button type="submit">🔍 Search</button>
+        {% if search_query %}
+            <a href="{{ url_for('examination') }}" class="clear-search">❌ Clear</a>
+        {% endif %}
+    </form>
+
+    <!-- Medical Examination Tablosu -->
+    <table>
+        <thead>
+            <tr>
+                <th>Examination ID</th>
+                <th>Patient ID</th>
+                <th>Doctor ID</th>
+                <th>Examination Date</th>
+                <th>Diagnosis</th>
+                <th>Prescription</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in examinations %}
+            <tr>
+                <td>{{ e.examinationid }}</td>
+                <td>{{ e.patientid }}</td>
+                <td>{{ e.doctorid }}</td>
+                <td>{{ e.examinationdate }}</td>
+                <td>{{ e.diagnosis }}</td>
+                <td>{{ e.prescription }}</td>
+                <td>
+                    <a href="{{ url_for('delete_examination', examinationid=e.examinationid) }}" class="delete-button">✖ Delete</a>
+                    <a href="{{ url_for('examination', edit=e.examinationid) }}" class="edit-button">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

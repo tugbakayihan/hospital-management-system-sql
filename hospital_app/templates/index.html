@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Patient Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <div class="main-container">
+        <h1>🏥 Hospital Management System</h1>
+        <h2 style="text-align:center; color:#6870de; margin-top:-10px;"> Patient Management</h2>
+
+        <!-- 🌐 Top Navigation -->
+        <nav class="navigation">
+            <a href="{{ url_for('hospitals') }}">🏥 Hospital</a>
+            <a href="{{ url_for('doctor') }}">👨‍⚕️ Doctor</a>
+            <a href="{{ url_for('departments') }}">🏢 Department</a>
+            <a href="{{ url_for('bills') }}">💳 Billing</a>
+            <a href="{{ url_for('examination') }}">📝 Examination</a>
+            <a href="{{ url_for('index') }}">👤 Patient</a>
+        </nav>
+
+        <!-- ➕ / ✏️ Patient Form -->
+        <form method="POST" action="{{ url_for('submit_patient') }}" class="patient-form">
+            {% if selected_patient %}
+                <input type="hidden" name="patientid" value="{{ selected_patient.id }}" />
+            {% endif %}
+
+            <input
+                type="text"
+                name="firstname"
+                placeholder="First Name"
+                value="{{ selected_patient.firstname if selected_patient else '' }}"
+                required
+            />
+            <input
+                type="text"
+                name="lastname"
+                placeholder="Last Name"
+                value="{{ selected_patient.lastname if selected_patient else '' }}"
+                required
+            />
+            <input
+                type="date"
+                name="birthdate"
+                placeholder="Birthdate"
+                value="{{ selected_patient.birthdate if selected_patient else '' }}"
+                required
+            />
+            <input
+                type="text"
+                name="gender"
+                placeholder="Gender"
+                value="{{ selected_patient.gender if selected_patient else '' }}"
+                required
+            />
+            <input
+                type="text"
+                name="phonenumber"
+                placeholder="Phone Number"
+                value="{{ selected_patient.phonenumber if selected_patient else '' }}"
+                required
+            />
+            <button type="submit">
+                {% if selected_patient %}Update{% else %}Add Patient{% endif %}
+            </button>
+        </form>
+
+        <!-- 🔍 Search Form -->
+        <form method="GET" action="/" class="search-form">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search by name"
+                value="{{ search_query }}"
+            />
+            <button type="submit">🔍 Search</button>
+            {% if search_query %}
+                <a href="/" class="clear-search">❌ Clear</a>
+            {% endif %}
+        </form>
+
+        <!-- 📋 Patient Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                    <tr>
+                        <td>{{ p.id }}</td>
+                        <td>{{ p.firstname }} {{ p.lastname }}</td>
+                        <td>{{ p.age }}</td>
+                        <td>{{ p.gender }}</td>
+                        <td>{{ p.phonenumber }}</td>
+                        <td>
+                            <a href="/delete/{{ p.id }}" class="delete-button">✖ Delete</a>
+                            <a href="/?edit={{ p.id }}" class="edit-button">✏️ Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

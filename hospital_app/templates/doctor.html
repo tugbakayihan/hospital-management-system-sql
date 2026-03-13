@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="main-container">
+    <h1>🏥 Hospital Management System</h1>
+    <h2 style="text-align:center; color:#6870de; margin-top:-10px;"> Doctor Management</h2>
+
+    <div class="navigation">
+        <a href="{{ url_for('hospitals') }}">🏥 Hospital</a>
+        <a href="{{ url_for('doctor') }}">👨‍⚕️ Doctor</a>
+        <a href="{{ url_for('departments') }}">🏢 Department</a>
+        <a href="{{ url_for('bills') }}">💳 Billing</a>
+        <a href="{{ url_for('examination') }}">📝 Examination</a>
+        <a href="{{ url_for('index') }}">👤 Patient</a>
+    </div>
+
+    <!--{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <script>
+            {% for category, message in messages %}
+                alert({{ message | tojson | safe }});
+            {% endfor %}
+        </script>
+    {% endif %}
+    {% endwith %}-->
+
+        
+
+
+    <form method="POST" action="{{ url_for('submit_doctor') }}" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;">
+    <input type="hidden" name="doctorid" value="{{ selected_doctor.doctorid if selected_doctor else '' }}">
+    
+    <input type="text" name="firstname" placeholder="First Name" value="{{ selected_doctor.firstname if selected_doctor else '' }}" required>
+    
+    <input type="text" name="lastname" placeholder="Last Name" value="{{ selected_doctor.lastname if selected_doctor else '' }}" required>
+    
+    <input type="number" name="yearsofexperience" placeholder="Years of Experience" value="{{ selected_doctor.yearsofexperience if selected_doctor else '' }}" required>
+    
+    <input type="text" name="specialization" placeholder="Specialization" value="{{ selected_doctor.specialization if selected_doctor else '' }}" required>
+    
+    <input type="text" name="phonenumber" placeholder="Phone Number" value="{{ selected_doctor.phonenumber if selected_doctor else '' }}" required>
+    
+    <input type="number" name="departmentid" placeholder="Department ID" value="{{ selected_doctor.departmentid if selected_doctor else '' }}" required>
+
+        {% if selected_doctor %}
+            <button type="submit" style="background-color: #f39c9c; color: #333;">Update</button>
+        {% else %}
+            <button type="submit">Add Doctor</button>
+        {% endif %}
+    </form> <br>
+
+        <!-- Search Form -->
+        <form method="GET" action="{{ url_for('doctor') }}" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+            <input type="text" name="search" placeholder="Search by name or specialization..." value="{{ search_query }}">
+            <button type="submit">🔍 Search</button>
+            {% if search_query %}
+                <a href="{{ url_for('doctor') }}" class="clear-search">❌ Clear</a>
+            {% endif %}
+        </form> <br>
+
+    <!-- Doctor List -->
+
+    <table>
+        <thead>
+            <tr>
+                <th>Doctor ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Specialization</th>
+                <th>Experience</th>
+                <th>Phone</th>
+                <th>Department ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in doctors %}
+            <tr>
+                <td>{{ d.doctorid }}</td>
+                <td>{{ d.firstname }}</td>
+                <td>{{ d.lastname }}</td>
+                <td>{{ d.specialization }}</td>
+                <td>{{ d.yearsofexperience }}</td>
+                <td>{{ d.phonenumber }}</td>
+                <td>{{ d.departmentid }}</td>
+                <td>
+                    <a href="/delete_doctor/{{ d.doctorid }}" class="delete-button">✖ Delete</a>
+                    <a href="/doctor?edit={{ d.doctorid }}" class="edit-button">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

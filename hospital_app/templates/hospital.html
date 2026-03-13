@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="main-container">
+    <h1>🏥 Hospital Management System</h1>
+    <h2 style="text-align:center; color:#6870de; margin-top:-10px;">Hospital Management</h2>
+
+    <!-- 🔗 Navigation -->
+    <nav class="navigation">
+        <a href="{{ url_for('hospitals') }}">🏥 Hospital</a>
+        <a href="{{ url_for('doctor') }}">👨‍⚕️ Doctor</a>
+        <a href="{{ url_for('departments') }}">🏢 Department</a>
+        <a href="{{ url_for('bills') }}">💳 Billing</a>
+        <a href="{{ url_for('examination') }}">📝 Examination</a>
+        <a href="{{ url_for('index') }}">👤 Patient</a>
+    </nav>
+
+    <!-- ➕/✏️ Hospital Form -->
+    <form method="POST" action="/submit_hospital">
+        {% if selected_hospital %}
+            <input type="hidden" name="hospitalid" value="{{ selected_hospital.hospitalid }}">
+        {% endif %}
+        <input type="text"  name="hospitalname" placeholder="Hospital Name"
+               value="{{ selected_hospital.hospitalname if selected_hospital else '' }}" required>
+        <input type="text"  name="address"      placeholder="Address"
+               value="{{ selected_hospital.address if selected_hospital else '' }}" required>
+        <input type="text"  name="city"         placeholder="City"
+               value="{{ selected_hospital.city if selected_hospital else '' }}" required>
+        <input type="text"  name="phonenumber"  placeholder="Phone Number"
+               value="{{ selected_hospital.phonenumber if selected_hospital else '' }}" required>
+        <button type="submit">
+            {{ 'Update' if selected_hospital else 'Add Hospital' }}
+        </button>
+    </form>
+
+    <!-- 🔍 Search -->
+    <form method="GET" action="/hospitals" class="form-container">
+        <input type="text" name="search" placeholder="Search by name or city" value="{{ search_query }}">
+        <button type="submit">🔍 Search</button>
+        {% if search_query %}
+            <a href="/hospitals" class="clear-search">❌ Clear</a>
+        {% endif %}
+    </form>
+
+    <!-- 📋 Hospital Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Hospital Name</th><th>Address</th>
+                <th>City</th><th>Phone Number</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for h in hospitals %}
+            <tr>
+                <td>{{ h.hospitalid }}</td>
+                <td>{{ h.hospitalname }}</td>
+                <td>{{ h.address }}</td>
+                <td>{{ h.city }}</td>
+                <td>{{ h.phonenumber }}</td>
+                <td>
+                    <a href="/delete_hospital/{{ h.hospitalid }}" class="delete-button">✖ Delete</a>
+                    <a href="/hospitals?edit={{ h.hospitalid }}"  class="edit-button">✏️ Edit</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
